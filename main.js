@@ -16,7 +16,6 @@ Main.prototype = {
     game.load.image('menu',    'assets/images/menu.png');
     game.load.image('howToPlay',    'assets/images/howToPlay.png');
     game.load.image('loading',  'assets/images/loading.png');
-
     game.load.image('background', 'assets/images/background.png');
     game.load.image('gameover-bg', 'assets/images/gameover-bg.png');
     game.load.image('bound', 'assets/images/bound.png');
@@ -24,7 +23,7 @@ Main.prototype = {
     game.load.image('playerDead', 'assets/images/U-boatDead.png');
     game.load.image('torpedo', 'assets/images/torpedo.png');
     game.load.image('pointerRayVert', 'assets/images/pointerRayVert.png');
-    game.load.image('pointerRayHoriz', 'assets/images/pointerRayhoriz.png');
+    game.load.image('pointerRayHoriz', 'assets/images/pointerRayHoriz.png');
     game.load.image('cruiser', 'assets/images/cruiser.png');
     game.load.image('cruiserDead', 'assets/images/cruiserDead.png');
     game.load.image('depthBomb', 'assets/images/depthBomb.png');
@@ -38,6 +37,7 @@ Main.prototype = {
     game.load.image('fire3', 'assets/images/fire3.png');
     game.load.image('torpedoesReloadIcon', 'assets/images/torpedoesReloadIcon.png');
     game.load.image('torpedoesReloadIconUnavailable', 'assets/images/torpedoesReloadIconUnavailable.png');
+
     game.load.script('polyfill',   'lib/polyfill.js');
     game.load.script('utils',   'lib/utils.js');
     game.load.script('splash',  'states/Splash.js');
