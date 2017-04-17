@@ -1,0 +1,15 @@
+{
+  "name": "game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "phaser": "^2.4.3",
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+  },
+  "author": "Denis Molodianovich",
+  "license": "ISC"
+}
