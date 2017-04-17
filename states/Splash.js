@@ -13,24 +13,19 @@ Splash.prototype = {
       game.load.script('options', 'states/options.js');
    },
 
-   loadBgm: function() {
-      // game.load.audio('dangerous', 'assets/bgm/Dangerous.mp3');
-      // game.load.audio('exit', 'assets/bgm/Exit the Premises.mp3');
-   },
-   loadImages: function() {
-      //  game.load.image('menu-bg', 'assets/images/menu.png');
-      //  game.load.image('options-bg', 'assets/images/options-bg.jpg');
-      //  game.load.image('gameover-bg', 'assets/images/gameover-bg.jpg');
-   },
+   // loadBgm: function() {
+   //    game.load.audio('dangerous', 'assets/bgm/Dangerous.mp3');
+   //    game.load.audio('exit', 'assets/bgm/Exit the Premises.mp3');
+   // },
 
-   loadFonts: function() {
-      // WebFontConfig = {
-      //   custom: {
-      //     families: ['TheMinion'],
-      //     urls: ['assets/style/theminion.css']
-      //   }
-      // }
-   },
+   // loadFonts: function() {
+   //    WebFontConfig = {
+   //      custom: {
+   //        families: ['TheMinion'],
+   //        urls: ['assets/style/theminion.css']
+   //      }
+   //    }
+   // },
 
    init: function() {
       this.titleText = game.make.text(game.world.centerX, 100, "DEEP HUNTER", {
@@ -41,22 +36,18 @@ Splash.prototype = {
       this.titleText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
       this.titleText.anchor.set(0.5);
       this.loadingBar = game.make.sprite(game.world.centerX - (540 / 2), 550, "loading");
-      // this.logo       = game.make.sprite(game.world.centerX, 200, 'brand');
-      // this.status     = game.make.text(game.world.centerX, 380, 'Loading...', {fill: 'white'});
       // utils.centerGameObjects([this.logo, this.status]);
    },
 
    preload: function() {
       game.add.sprite(0, 0, 'menu');
-      // game.add.existing(this.logo).scale.setTo(0.5);
       game.add.existing(this.loadingBar);
-      // game.add.existing(this.status);
       this.load.setPreloadSprite(this.loadingBar);
 
       this.loadScripts();
-      this.loadImages();
-      this.loadFonts();
-      this.loadBgm();
+      // this.loadImages();
+      // this.loadFonts();
+      // this.loadBgm();
 
    },
 
@@ -65,22 +56,21 @@ Splash.prototype = {
       game.state.add("GameMenu", GameMenu);
       game.state.add("Game", Game);
       game.state.add("GameOver", GameOver);
-      // game.state.add("Credits", Credits);
-      // game.state.add("Options", Options);
+      // game.state.add("Credits", Creions);
    },
 
    addGameMusic: function() {
-      // music = game.add.audio('dangerous');
-      // music.loop = true;
-      // music.play();
+
+      music = game.add.audio('game-bgm');
+      music.loop = true;
+      music.play();
    },
 
    create: function() {
-      // this.status.setText('Ready!');
       game.add.existing(this.titleText);
 
       this.addGameStates();
-      // this.addGameMusic();
+      this.addGameMusic();
 
       setTimeout(function() {
          game.state.start("GameMenu");

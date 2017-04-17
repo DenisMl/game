@@ -16,6 +16,17 @@ Game.prototype = {
       bg.width = game.world.width;
       game.stage.backgroundColor = "#4488AA";
 
+      if (music.name !== 'game-bgm') {
+         music.stop();
+         music = game.add.audio('game-bgm');
+         music.loop = true;
+         music.play();
+      }
+
+      bombExplosionSound = game.add.audio('bombExplosionSound');
+      submarineExplosionSound = game.add.audio('submarineExplosionSound');
+      cruiserExplosionSound = game.add.audio('cruiserExplosionSound');
+
       platforms = game.add.group();                      //PLATFORMS
       platforms.enableBody = true;
 
@@ -197,6 +208,9 @@ Game.prototype = {
       blastWave.setScale(0.3, 1, 0.3, 1, 400);
       // blastWave.start(true, 300, null, 5);   //(explode, lifespan, frequency, quantity, forceQuantity)
 
+      flashRed = game.add.sprite(0, 0, 'flashRed');
+      flashRed.alpha = 0;
+
       this.stage.disableVisibilityChange = false;
    },
 
@@ -233,6 +247,10 @@ Game.prototype = {
 
       if (cruisers.availableCruiser && game.time.now > cruisers.cruiserTimer) {
          this.spawnCruiser();
+      }
+
+      if (flashRed.alpha > 0) {
+         flashRed.alpha -= 0.05;
       }
 
       // Move sprite up and down smoothly for show -----------------------------------------------------
@@ -305,9 +323,6 @@ Game.prototype = {
 
    torpedoKill: function(torpedo) {
       torpedo.kill();
-      // torpedoEmitter.kill();
-      // torpedoEmitter.emitX = 10;
-      // torpedoEmitter.emitY = 10;
    },
 
    torpedoUpdate: function() {
@@ -316,7 +331,6 @@ Game.prototype = {
          torpedoEmitter.emitY = this.y;
          torpedoEmitter.emitParticle();
       }
-      // torpedoEmitter.start(false, 200, 40, 1);   //(explode, lifespan, frequency, quantity, forceQuantity)
    },
 
    spawnCruiser: function() {
@@ -327,7 +341,6 @@ Game.prototype = {
          cruiser.reset(player.x - 960, 163);
       }
       cruisers.availableCruiser = false;
-      console.log('cruiser spawned');
    },
 
    cruiserKill: function(torpedo, cruiser) {
@@ -356,7 +369,9 @@ Game.prototype = {
          cruiserDead.scale.x = 1:
          cruiserDead.scale.x = -1;
       cruiserDead.body.angularVelocity = game.rnd.between(-50, 50);
-      console.log('cruiser killed');
+
+      cruiserExplosionSound.play();
+
    },
 
    cruiserDeadStop: function(cruiserDead) {
@@ -392,7 +407,6 @@ Game.prototype = {
    },
 
    cruiserBombard: function(direction, cruiser) {
-      console.log('cruiser bombard');
       game.physics.arcade.moveToXY(cruiser, cruiser.x + direction * 200, cruiser.y, 180);
       game.time.events.add(Phaser.Timer.SECOND * 30 / 180, this.cruiserDropBomb, cruiser);// (delay, callback, callbackContext, arguments)
       game.time.events.add(Phaser.Timer.SECOND * 100 / 180, this.cruiserDropBomb, cruiser);
@@ -425,6 +439,7 @@ Game.prototype = {
          blastWave.emitY = this.y + 25;
          blastWave.start(true, 300, null, 1);
 
+         bombExplosionSound.play();
          this.kill();
       }
    },
@@ -444,7 +459,6 @@ Game.prototype = {
    cruiserEvasion: function(pointerRay, cruiser) {
       let dx = cruiser.x - pointerRay.x;
       if (cruiser.cruiserIsBusy === false) {
-         console.log('cruiser evades');
          if (dx > 0) {
             dx = 250 - dx;
             let evasionTime = (dx) / 180 * 1000; //ms
@@ -478,10 +492,10 @@ Game.prototype = {
       if (blastWave.alive === true) {
          player.damage(1);
          healthText.text = 'HP: ' + player.health;
+         flashRed.alpha = 1;
          // game.camera.flash(0xff0000, 500);
          // game.camera.shake(0.05, 500);
          blastWave.kill();
-         console.log('player damaged!');
       }
    },
 
@@ -494,6 +508,8 @@ Game.prototype = {
          playerDeadObj.scale.x = 1:
          playerDeadObj.scale.x = -1;
       playerDeadObj.body.angularVelocity = game.rnd.between(-50, 50);
+
+      submarineExplosionSound.play();
 
       game.time.events.add(Phaser.Timer.SECOND * 3, game.state.start, game.state, 'GameOver');
    },

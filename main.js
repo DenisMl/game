@@ -37,10 +37,17 @@ Main.prototype = {
     game.load.image('fire3', 'assets/images/fire3.png');
     game.load.image('torpedoesReloadIcon', 'assets/images/torpedoesReloadIcon.png');
     game.load.image('torpedoesReloadIconUnavailable', 'assets/images/torpedoesReloadIconUnavailable.png');
+    game.load.image('flashRed', 'assets/images/flashRed.png');
 
     game.load.script('polyfill',   'lib/polyfill.js');
     game.load.script('utils',   'lib/utils.js');
     game.load.script('splash',  'states/Splash.js');
+
+    game.load.audio('game-bgm', 'assets/bgm/game-bgm.mp3');
+    game.load.audio('gameover-bgm', 'assets/bgm/gameover-bgm.mp3');
+    game.load.audio('bombExplosionSound', 'assets/bgm/bombExplosionSound.mp3');
+    game.load.audio('cruiserExplosionSound', 'assets/bgm/cruiserExplosionSound.mp3');
+    game.load.audio('submarineExplosionSound', 'assets/bgm/submarineExplosionSound.mp3');
   },
 
   create: function () {

@@ -20,7 +20,12 @@ GameMenu.prototype = {
    },
 
    create: function() {
-
+      if (music.name !== 'game-bgm') {
+         music.stop();
+         music = game.add.audio('game-bgm');
+         music.loop = true;
+         music.play();
+      }
       // if (music.name !== "dangerous" && playMusic) {
       //   music.stop();
       //   music = game.add.audio('dangerous');
