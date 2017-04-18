@@ -27,7 +27,7 @@ Game.prototype = {
       submarineExplosionSound = game.add.audio('submarineExplosionSound');
       cruiserExplosionSound = game.add.audio('cruiserExplosionSound');
 
-      platforms = game.add.group();                      //PLATFORMS
+      platforms = game.add.group(); //PLATFORMS
       platforms.enableBody = true;
 
       boundBottom = platforms.create(-200, game.world.height - 2, 'bound');
@@ -38,20 +38,31 @@ Game.prototype = {
       boundWater.width = game.world.width + 300;
       boundWater.body.immovable = true;
 
-      torpedoes = game.add.group();                      //TORPEDOES
+      torpedoes = game.add.group(); //TORPEDOES
       torpedoes.enableBody = true;
       game.physics.arcade.enable(torpedoes);
-      torpedoes.createMultiple(20, 'torpedo');
+      torpedoes.createMultiple(10, 'torpedo');
       torpedoes.setAll('anchor.x', 0.5);
       torpedoes.setAll('anchor.y', 0.5);
       torpedoes.setAll('checkWorldBounds', true);
       torpedoes.setAll('outOfBoundsKill', true);
       torpedoes.setAll('update', this.torpedoUpdate);
 
-      pointerRaysHoriz = game.add.group();                     //RAYS
+      playerTorpedoes = game.add.group(); //PLAYER TORPEDOES
+      playerTorpedoes.enableBody = true;
+      game.physics.arcade.enable(playerTorpedoes);
+      playerTorpedoes.createMultiple(10, 'torpedo');
+      playerTorpedoes.setAll('anchor.x', 0.5);
+      playerTorpedoes.setAll('anchor.y', 0.5);
+      playerTorpedoes.setAll('checkWorldBounds', true);
+      playerTorpedoes.setAll('outOfBoundsKill', true);
+      playerTorpedoes.setAll('update', this.torpedoUpdate);
+
+      pointerRaysHoriz = game.add.group(); //RAYS
       pointerRaysHoriz.enableBody = true;
       game.physics.arcade.enable(pointerRaysHoriz);
       pointerRaysHoriz.createMultiple(20, 'pointerRayHoriz');
+      // pointerRaysHoriz.setAll('anchor.x', 0.5);
 
       pointerRaysVert = game.add.group();
       pointerRaysVert.enableBody = true;
@@ -59,7 +70,7 @@ Game.prototype = {
       pointerRaysVert.createMultiple(20, 'pointerRayVert');
       pointerRaysVert.setAll('anchor.y', 1);
 
-      depthBombs = game.add.group();                     //DEPTHBOMBS
+      depthBombs = game.add.group(); //DEPTHBOMBS
       depthBombs.enableBody = true;
       game.physics.arcade.enable(depthBombs);
       depthBombs.createMultiple(9, 'depthBomb');
@@ -67,7 +78,7 @@ Game.prototype = {
       depthBombs.setAll('anchor.y', 0.5);
       depthBombs.setAll('update', this.depthBombUpdate);
 
-      cruisers = game.add.group();                    //CRUISERS
+      cruisers = game.add.group(); //CRUISERS
       cruisers.enableBody = true;
       game.physics.arcade.enable(cruisers);
       cruisers.createMultiple(2, 'cruiser');
@@ -79,16 +90,37 @@ Game.prototype = {
       cruisers.bombsReloadTime = 3000;
       cruisers.cruiserSpawnTime = 2000;
       cruisers.cruiserTimer = 2000;
-      cruisers.availableCruiser = true;
+      cruisers.availableCruiser = true; //true
 
-      cruisersDead = game.add.group();                    //CRUISERSDEAD
+      cruisersDead = game.add.group(); //CRUISERSDEAD
       cruisersDead.enableBody = true;
       game.physics.arcade.enable(cruisersDead);
       cruisersDead.createMultiple(10, 'cruiserDead');
       cruisersDead.setAll('anchor.x', 0.5);
       cruisersDead.setAll('anchor.y', 0.5);
 
-      playerDead = game.add.group();                    //CRUISERSDEAD
+      submarines = game.add.group(); //SUBMARINES
+      submarines.enableBody = true;
+      game.physics.arcade.enable(submarines);
+      submarines.createMultiple(2, 'submarine');
+      submarines.setAll('anchor.x', 0.5);
+      submarines.setAll('anchor.y', 0.5);
+      submarines.setAll('update', this.submarinesUpdate);
+      submarines.setAll('submarineIsBusy', false, false, false, 0, true);
+      submarines.setAll('torpedoesReloaded', true, false, false, 0, true); //setAll(key, value, checkAlive, checkVisible, operation, force)
+      submarines.torpedoesReloadTime = 3000;
+      submarines.submarineSpawnTime = 2000;
+      submarines.submarineTimer = 2000;
+      submarines.availableSubmarine = false;
+
+      submarinesDead = game.add.group(); //SUBMARINESDEAD
+      submarinesDead.enableBody = true;
+      game.physics.arcade.enable(submarinesDead);
+      submarinesDead.createMultiple(10, 'submarineDead');
+      submarinesDead.setAll('anchor.x', 0.5);
+      submarinesDead.setAll('anchor.y', 0.5);
+
+      playerDead = game.add.group(); //PLAYERDEAD
       playerDead.enableBody = true;
       game.physics.arcade.enable(playerDead);
       playerDead.createMultiple(2, 'playerDead');
@@ -102,7 +134,6 @@ Game.prototype = {
       // destroyers.setAll('anchor.x', 0.5);
       // destroyers.setAll('anchor.y', 0.5);
 
-
       torpedoEmitter = game.add.emitter(game.world.centerX, game.world.centerY, 200);
       torpedoEmitter.makeParticles(['bubble1', 'bubble2', 'bubble3']);
       torpedoEmitter.gravity = -100;
@@ -113,20 +144,20 @@ Game.prototype = {
       torpedoEmitter.lifespan = 200;
       torpedoEmitter.frequency = 60;
 
-      player = game.add.sprite(300, game.world.height / 2, 'U-boat');      //PLAYER
+      player = game.add.sprite(300, game.world.height / 2, 'U-boat'); //PLAYER
       player.anchor.set(0.5);
       game.physics.arcade.enable(player);
       player.body.drag.set(1700);
       player.health = 3;
       player.events.onKilled.add(this.playerKilled, player);
-      // player.body.gravity.y = 400;
+      player.cruisersKilled = 0;
+      player.submarinesKilled = 0;
 
       torpedoesReloadIcons = game.add.group();
       torpedoesReloadIcons.fixedToCamera = true;
       torpedoesReloadIcons.create(30, game.height - 30, 'torpedoesReloadIcon');
       torpedoesReloadIcons.create(95, game.height - 30, 'torpedoesReloadIcon');
       torpedoesReloadIcons.create(160, game.height - 30, 'torpedoesReloadIcon');
-
 
       keyA = game.input.keyboard.addKey(Phaser.Keyboard.A);
       keyD = game.input.keyboard.addKey(Phaser.Keyboard.D);
@@ -216,12 +247,18 @@ Game.prototype = {
 
    update: function() {
       game.physics.arcade.collide(player, platforms);
+      game.physics.arcade.collide(submarines, platforms);
       game.physics.arcade.collide(cruisersDead, platforms, this.cruiserDeadStop);
+      game.physics.arcade.collide(submarinesDead, platforms, this.submarineDeadStop);
       game.physics.arcade.collide(torpedoes, platforms, this.torpedoKill);
+      game.physics.arcade.collide(playerTorpedoes, platforms, this.torpedoKill);
+      game.physics.arcade.collide(playerTorpedoes, submarines, this.submarineDamaged);
+      game.physics.arcade.overlap(playerTorpedoes, cruisers, this.cruiserKill);
       game.physics.arcade.collide(player, depthBombs, this.damagedByDepthBomb);
-      game.physics.arcade.overlap(torpedoes, cruisers, this.cruiserKill);
-      game.physics.arcade.overlap(pointerRaysVert, cruisers, this.cruiserEvasion);
+      game.physics.arcade.collide(player, torpedoes, this.damagedByTorpedoes);
       game.physics.arcade.overlap(blastWave, player, this.damagedByDepthBombWave);
+      game.physics.arcade.overlap(pointerRaysVert, cruisers, this.cruiserEvasion);
+      game.physics.arcade.overlap(pointerRaysHoriz, submarines, this.submarineEvasion);
 
       if (keyW.isDown) {
          player.body.velocity.y = -150;
@@ -249,6 +286,10 @@ Game.prototype = {
          this.spawnCruiser();
       }
 
+      if (submarines.availableSubmarine && game.time.now > submarines.submarineTimer) {
+         this.spawnSubmarine();
+      }
+
       if (flashRed.alpha > 0) {
          flashRed.alpha -= 0.05;
       }
@@ -273,7 +314,7 @@ Game.prototype = {
    torpedoLeft: function() {
       let torpedoIcon = torpedoesReloadIcons.getFirstAlive();
       if (torpedoIcon && player.alive) {
-         torpedo = torpedoes.getFirstDead();
+         torpedo = playerTorpedoes.getFirstDead();
          pointerRay = pointerRaysHoriz.getFirstDead();
          torpedo.reset(player.x, player.y + 10);
          torpedo.scale.set(0.5, 0.5);
@@ -291,7 +332,7 @@ Game.prototype = {
    torpedoRight: function() {
       let torpedoIcon = torpedoesReloadIcons.getFirstAlive();
       if (torpedoIcon && player.alive) {
-         torpedo = torpedoes.getFirstDead();
+         torpedo = playerTorpedoes.getFirstDead();
          pointerRay = pointerRaysHoriz.getFirstDead();
          torpedo.reset(player.x, player.y + 10);
          torpedo.scale.set(-0.5, 0.5);
@@ -308,7 +349,7 @@ Game.prototype = {
    torpedoUp: function() {
       let torpedoIcon = torpedoesReloadIcons.getFirstAlive();
       if (torpedoIcon && player.alive) {
-         torpedo = torpedoes.getFirstDead();
+         torpedo = playerTorpedoes.getFirstDead();
          pointerRay = pointerRaysVert.getFirstDead();
          torpedo.reset(player.x, player.y);
          torpedo.scale.set(0.3, 0.4);
@@ -361,13 +402,19 @@ Game.prototype = {
       score += 10;
       scoreText.text = 'Score: ' + score;
       cruisers.cruiserTimer = game.time.now + cruisers.cruiserSpawnTime;
-      cruisers.availableCruiser = true;
+      player.cruisersKilled++;
+
+      if (player.cruisersKilled === 1) {
+         submarines.availableSubmarine = true;
+      } else if (player.cruisersKilled > 1) {
+         cruisers.availableCruiser = true;
+      }
       cruiserDead = cruisersDead.getFirstDead();
       cruiserDead.body.gravity.y = game.rnd.between(60, 100);
       cruiserDead.reset(cruiser.x, cruiser.y);
-      cruiser.scale.x > 0 ?
-         cruiserDead.scale.x = 1:
-         cruiserDead.scale.x = -1;
+      cruiser.scale.x > 0
+         ? cruiserDead.scale.x = 1
+         : cruiserDead.scale.x = -1;
       cruiserDead.body.angularVelocity = game.rnd.between(-50, 50);
 
       cruiserExplosionSound.play();
@@ -408,7 +455,7 @@ Game.prototype = {
 
    cruiserBombard: function(direction, cruiser) {
       game.physics.arcade.moveToXY(cruiser, cruiser.x + direction * 200, cruiser.y, 180);
-      game.time.events.add(Phaser.Timer.SECOND * 30 / 180, this.cruiserDropBomb, cruiser);// (delay, callback, callbackContext, arguments)
+      game.time.events.add(Phaser.Timer.SECOND * 30 / 180, this.cruiserDropBomb, cruiser); // (delay, callback, callbackContext, arguments)
       game.time.events.add(Phaser.Timer.SECOND * 100 / 180, this.cruiserDropBomb, cruiser);
       game.time.events.add(Phaser.Timer.SECOND * 170 / 180, this.cruiserDropBomb, cruiser);
       game.time.events.add(Phaser.Timer.SECOND * 200 / 180, this.cruiserFree, cruiser);
@@ -484,6 +531,184 @@ Game.prototype = {
       this.kill();
    },
 
+   spawnSubmarine: function() {
+      var submarine = submarines.getFirstDead();
+      if (player.x + 960 < game.world.width) {
+         submarine.reset(player.x + 960, game.rnd.between(200, 800));
+      } else {
+         submarine.reset(player.x - 960, game.rnd.between(200, 800));
+      }
+      submarine.health = 2;
+      submarines.availableSubmarine = false;
+   },
+
+   submarinesUpdate: function() {
+      if (this.alive && player.alive && this.submarineIsBusy === false && this.torpedoesReloaded === true && this.x > player.x - 480 && this.x < player.x + 480) {
+         if (this.y > player.y - 30) {
+            (this.x < player.x)
+               ? Game.prototype.submarineTorpedo.call(Game.prototype, 1, -1, this)
+               : Game.prototype.submarineTorpedo.call(Game.prototype, -1, -1, this); //directionX, directionY, submarine
+
+         } else if (this.y < player.y + 30) {
+            (this.x < player.x)
+               ? Game.prototype.submarineTorpedo.call(Game.prototype, 1, 1, this)
+               : Game.prototype.submarineTorpedo.call(Game.prototype, -1, 1, this);
+         }
+         this.submarineIsBusy = true;
+         this.torpedoesReloaded = false;
+      }
+
+      if (this.submarineIsBusy === false) {
+         if (this.x < player.x - 220) {
+            if (this.x < player.x - 400) {
+               this.body.velocity.x = 160;
+               this.scale.set(1, 1);
+            }
+            if (this.y < player.y - 10) {
+               this.body.velocity.y = 100;
+            } else if (this.y > player.y + 15) {
+               this.body.velocity.y = -100;
+            } else {
+               this.body.velocity.y = 0;
+            }
+         } else if (this.x > player.x + 220) {
+            if (this.x > player.x + 400) {
+               this.body.velocity.x = -160;
+               this.scale.set(-1, 1);
+            }
+            if (this.y < player.y - 10) {
+               this.body.velocity.y = 100;
+            } else if (this.y > player.y + 15) {
+               this.body.velocity.y = -100;
+            } else {
+               this.body.velocity.y = 0;
+            }
+         } else if (this.x < player.x + 220 && this.x > player.x) {
+            this.body.velocity.x = 160;
+            this.scale.set(1, 1);
+            if (this.y < player.y - 10) {
+               this.body.velocity.y = 100;
+            } else if (this.y > player.y + 10) {
+               this.body.velocity.y = -100;
+            }
+         } else if (this.x > player.x - 220 && this.x < player.x) {
+            this.body.velocity.x = -160;
+            this.scale.set(-1, 1);
+            if (this.y < player.y - 10) {
+               this.body.velocity.y = 100;
+            } else if (this.y > player.y + 10) {
+               this.body.velocity.y = -100;
+            }
+         }
+      }
+   },
+
+   submarineTorpedo: function(directionX, directionY, submarine) {
+      game.physics.arcade.moveToXY(submarine, submarine.x, submarine.y + directionY * 200, 100);
+      game.time.events.add(Phaser.Timer.SECOND * 0, this.submarineLaunchTorpedo, submarine, directionX); // (delay, callback, callbackContext, arguments)
+      game.time.events.add(Phaser.Timer.SECOND * 0.4, this.submarineLaunchTorpedo, submarine, directionX);
+      game.time.events.add(Phaser.Timer.SECOND * 0.4, this.submarineFree, submarine);
+      game.time.events.add(Phaser.Timer.SECOND * (0.4 + submarines.torpedoesReloadTime / 1000), this.submarineTorpedoesReload, submarine);
+   },
+
+   submarineLaunchTorpedo: function(scale) {
+      torpedo = torpedoes.getFirstDead();
+      torpedo.reset(this.x, this.y + 10);
+      torpedo.scale.set(-1 * scale * 0.7, 0.7);
+      torpedo.angle = 0;
+      game.physics.arcade.accelerateToXY(torpedo, this.x + scale * 10, this.y, 650, 1000, 0); //displayObject, x, y, speed, xSpeedMax, ySpeedMax
+
+   },
+
+   submarineFree: function() {
+      // this.body.drag.set(1500);
+      this.submarineIsBusy = false;
+   },
+
+   submarineTorpedoesReload: function() {
+      this.torpedoesReloaded = true;
+   },
+
+   submarineDamaged: function(torpedo, submarine) {
+      submarine.damage(1);
+      torpedo.kill();
+      bombExplosionSound.play();
+
+      depthBombExplosion.emitX = torpedo.x;
+      depthBombExplosion.emitY = torpedo.y;
+      depthBombExplosion.start(true, 1300, null, 50); //(explode, lifespan, frequency, quantity, forceQuantity)
+
+      if (submarine.health === 0) {
+         Game.prototype.submarineKilled(torpedo, submarine)
+      }
+   },
+
+   submarineKilled: function(torpedo, submarine) {
+      hugeExplosion.emitX = torpedo.x;
+      hugeExplosion.emitY = torpedo.y - 20;
+      hugeExplosion.start(true, 1300, null, 60);
+
+      hugeExplosion.emitX = submarine.x + game.rnd.between(-100, 100);
+      hugeExplosion.emitY = submarine.y + game.rnd.between(-15, 15);
+      hugeExplosion.start(true, 1300, null, 60);
+
+      hugeExplosion.emitX = submarine.x + game.rnd.between(-100, 100);
+      hugeExplosion.emitY = submarine.y + game.rnd.between(-15, 15);
+      hugeExplosion.start(true, 1300, null, 60);
+
+      score += 20;
+      scoreText.text = 'Score: ' + score;
+
+      submarine.kill();
+      torpedo.kill();
+      player.submarinesKilled++;
+
+      if (player.submarinesKilled === 1) {
+         submarines.availableSubmarine = true;
+         cruisers.availableCruiser = true;
+      } else if (player.submarinesKilled > 1) {
+         submarines.availableSubmarine = true;
+      }
+
+      submarines.submarineTimer = game.time.now + submarines.submarineSpawnTime;
+      submarineDead = submarinesDead.getFirstDead();
+      submarineDead.body.gravity.y = game.rnd.between(60, 100);
+      submarineDead.reset(submarine.x, submarine.y);
+      submarine.scale.x > 0
+         ? submarineDead.scale.x = 1
+         : submarineDead.scale.x = -1;
+      submarineDead.body.angularVelocity = game.rnd.between(-50, 50);
+      submarineExplosionSound.play();
+   },
+
+   submarineDeadStop: function(submarineDead) {
+      submarineDead.body.angularVelocity = 0;
+      game.time.events.add(Phaser.Timer.SECOND * 12, Game.prototype.submarineDeadKill, submarineDead);
+   },
+
+   submarineDeadKill: function() {
+      this.angle = 0;
+      this.kill();
+   },
+
+   submarineEvasion: function(pointerRay, submarine) {
+      let dy = submarine.y - pointerRay.y;
+      if (submarine.submarineIsBusy === false) {
+         if (dy > 0) {
+            dy = 100 - dy;
+            let evasionTime = 800; //ms
+            game.physics.arcade.moveToXY(submarine, submarine.x, submarine.y + 150, 100);
+            game.time.events.add(Phaser.Timer.SECOND * evasionTime / 1000, Game.prototype.submarineFree, submarine);
+         } else if (dy <= 0) {
+            dy = (dy + 100);
+            let evasionTime = 800; //ms
+            game.physics.arcade.moveToXY(submarine, submarine.x, submarine.y - 150, 100);
+            game.time.events.add(Phaser.Timer.SECOND * evasionTime / 1000, Game.prototype.submarineFree, submarine);
+         }
+         submarine.submarineIsBusy = true;
+      }
+   },
+
    damagedByDepthBomb: function(player, depthBomb) {
       Game.prototype.detonateDepthBomb.call(depthBomb);
    },
@@ -499,14 +724,29 @@ Game.prototype = {
       }
    },
 
+   damagedByTorpedoes: function(player, torpedo) {
+      if (torpedo.alive === true) {
+         player.damage(1);
+         healthText.text = 'HP: ' + player.health;
+         flashRed.alpha = 1;
+         bombExplosionSound.play();
+         torpedo.kill();
+
+         depthBombExplosion.emitX = torpedo.x;
+         depthBombExplosion.emitY = torpedo.y;
+         depthBombExplosion.start(true, 1300, null, 50);
+
+      }
+   },
+
    playerKilled: function() {
 
       playerDeadObj = playerDead.getFirstDead();
       playerDeadObj.body.gravity.y = game.rnd.between(60, 80);
       playerDeadObj.reset(player.x, player.y);
-      player.scale.x > 0 ?
-         playerDeadObj.scale.x = 1:
-         playerDeadObj.scale.x = -1;
+      player.scale.x > 0
+         ? playerDeadObj.scale.x = 1
+         : playerDeadObj.scale.x = -1;
       playerDeadObj.body.angularVelocity = game.rnd.between(-50, 50);
 
       submarineExplosionSound.play();

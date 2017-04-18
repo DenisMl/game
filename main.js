@@ -20,6 +20,8 @@ Main.prototype = {
     game.load.image('gameover-bg', 'assets/images/gameover-bg.png');
     game.load.image('bound', 'assets/images/bound.png');
     game.load.image('U-boat', 'assets/images/U-boat.png');
+    game.load.image('submarine', 'assets/images/submarine.png');
+    game.load.image('submarineDead', 'assets/images/submarineDead.png');
     game.load.image('playerDead', 'assets/images/U-boatDead.png');
     game.load.image('torpedo', 'assets/images/torpedo.png');
     game.load.image('pointerRayVert', 'assets/images/pointerRayVert.png');
@@ -31,6 +33,8 @@ Main.prototype = {
     game.load.image('bubble2', 'assets/images/bubble2.png');
     game.load.image('bubble3', 'assets/images/bubble3.png');
     game.load.image('bubble4', 'assets/images/bubble4.png');
+   //  game.load.image('oil1', 'assets/images/oil1.png');
+   //  game.load.image('oil2', 'assets/images/oil2.png');
     game.load.image('blastWave', 'assets/images/blastWave.png');
     game.load.image('fire1', 'assets/images/fire1.png');
     game.load.image('fire2', 'assets/images/fire2.png');

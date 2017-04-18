@@ -52,9 +52,20 @@ GameOver.prototype = {
          fill: '#FDFFB5',
          align: 'center'
       };
+
+      var scoreStyle = {
+         font: 'bold 35pt TheMinion',
+         fill: '#FDFFB5',
+         align: 'center'
+      };
       var text = game.add.text(game.width / 2, 100, "Game Over", titleStyle);
       text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
       text.anchor.set(0.5);
+
+      var scoreText = game.add.text(game.width / 2 - 100, 200, 'score: ' + score, scoreStyle);
+      text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
+      text.anchor.set(0.5);
+
       this.addMenuOption('Play Again', function(e) {
          this.game.state.start("Game");
       });
